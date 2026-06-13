@@ -1,0 +1,87 @@
+<?php
+
+namespace App\Http\Controllers\Admin;
+
+use App\Http\Controllers\Controller;
+use App\Models\User;
+use App\Services\SecurityAuditService;
+use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+
+class UserController extends Controller
+{
+    public function index(): View
+    {
+        $this->authorize('viewAny', User::class);
+
+        return view('admin.users.index', [
+            'users' => User::query()->with('role')->withTrashed()->orderBy('id')->paginate(20),
+        ]);
+    }
+
+    public function show(User $user): View
+    {
+        $this->authorize('view', $user);
+
+        return view('admin.users.show', [
+            'user' => $user->load('role'),
+        ]);
+    }
+
+    public function block(Request $request, User $user, SecurityAuditService $auditService): RedirectResponse
+    {
+        $this->authorize('block', $user);
+
+        $user->forceFill(['status' => 'locked', 'locked_until' => now()->addYears(10)])->save();
+        $auditService->log($request, 'user.blocked', 'warning', 200, $user->id, ['actor_id' => $request->user()->id]);
+
+        return back()->with('status', 'Usuario bloqueado.');
+    }
+
+    public function activate(Request $request, User $user, SecurityAuditService $auditService): RedirectResponse
+    {
+        $this->authorize('activate', $user);
+
+        $user->forceFill(['status' => 'active', 'locked_until' => null])->save();
+        $auditService->log($request, 'user.activated', 'info', 200, $user->id, ['actor_id' => $request->user()->id]);
+
+        return back()->with('status', 'Usuario activado.');
+    }
+
+    public function destroy(Request $request, User $user, SecurityAuditService $auditService): RedirectResponse
+    {
+        $this->authorize('delete', $user);
+
+        $user->delete();
+        $auditService->log($request, 'user.soft_deleted', 'warning', 200, $user->id, ['actor_id' => $request->user()->id]);
+
+        return redirect()->route('admin.users.index')->with('status', 'Usuario eliminado.');
+    }
+
+    public function resetPasskey(Request $request, User $user, SecurityAuditService $auditService): RedirectResponse
+    {
+        $this->authorize('resetPasskey', $user);
+
+        $deleted = DB::transaction(function () use ($user): bool {
+            $credentials = $user->webauthnCredentials()->orderBy('id')->get();
+
+            if ($credentials->count() <= 1) {
+                return false;
+            }
+
+            $credentials->first()->delete();
+
+            return true;
+        });
+
+        if (! $deleted) {
+            return back()->withErrors(['passkey' => config('security_errors.passkey.required.code').': '.config('security_errors.passkey.required.userInfo')]);
+        }
+
+        $auditService->log($request, 'passkey.deleted', 'warning', 200, $user->id, ['actor_id' => $request->user()->id]);
+
+        return back()->with('status', config('security_errors.passkey.removed.userInfo'));
+    }
+}
