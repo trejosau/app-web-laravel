@@ -7,6 +7,7 @@ use App\Models\User;
 use Database\Seeders\RoleSeeder;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use Tests\TestCase;
 
@@ -124,7 +125,7 @@ class MfaPendingSessionTest extends TestCase
         $response->assertRedirect(route('totp.login'));
     }
 
-    public function test_mfa_pending_redirects_to_passkey_after_totp(): void
+    public function test_mfa_pending_redirects_to_email_otp_after_totp(): void
     {
         $this->seed(RoleSeeder::class);
 
@@ -142,12 +143,13 @@ class MfaPendingSessionTest extends TestCase
             'auth_pending_totp_verified_at' => now()->timestamp,
         ])->get('/mfa/pending');
 
-        $response->assertRedirect(route('webauthn.setup'));
+        $response->assertRedirect(route('email-otp.show'));
     }
 
-    public function test_webauthn_setup_placeholder_requires_totp_verified_pending_session(): void
+    public function test_email_otp_requires_totp_verified_pending_session(): void
     {
         $this->seed(RoleSeeder::class);
+        Mail::fake();
 
         $role = Role::query()->where('name', Role::ADMIN)->firstOrFail();
         $user = User::factory()->create([
@@ -159,42 +161,25 @@ class MfaPendingSessionTest extends TestCase
             'auth_pending_level' => 3,
             'auth_pending_started_at' => now()->timestamp,
             'auth_pending_totp_verified_at' => now()->timestamp,
-        ])->get(route('webauthn.setup'))
+        ])->get(route('email-otp.show'))
             ->assertOk()
-            ->assertSee('Agregar Passkey')
-            ->assertSee('webauthn-register')
-            ->assertSee('data-options-url="/mfa/webauthn/register/options"', false)
-            ->assertSee('js/webauthn/passkey-client.js', false);
+            ->assertSee('OTP por correo');
     }
 
-    public function test_webauthn_registration_options_are_generated_for_pending_admin(): void
+    public function test_email_otp_is_not_available_without_totp_verified_pending_session(): void
     {
         $this->seed(RoleSeeder::class);
 
         $role = Role::query()->where('name', Role::ADMIN)->firstOrFail();
         $user = User::factory()->create([
             'role_id' => $role->id,
-            'username' => 'webauthn_admin',
+            'username' => 'email_otp_admin',
         ]);
 
-        $response = $this->withSession([
+        $this->withSession([
             'auth_pending_user_id' => $user->id,
             'auth_pending_level' => 3,
             'auth_pending_started_at' => now()->timestamp,
-            'auth_pending_totp_verified_at' => now()->timestamp,
-        ])->get(route('webauthn.register.options'));
-
-        $response->assertOk();
-        $response->assertJsonPath('publicKey.rp.id', config('webauthn.rp_id'));
-        $response->assertJsonPath('publicKey.user.name', 'webauthn_admin');
-        $response->assertJsonStructure([
-            'publicKey' => [
-                'challenge',
-                'rp' => ['name', 'id'],
-                'user' => ['id', 'name', 'displayName'],
-                'pubKeyCredParams',
-            ],
-        ]);
-        $response->assertSessionHas('webauthn_register_challenge');
+        ])->get(route('email-otp.show'))->assertNotFound();
     }
 }

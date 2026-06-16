@@ -166,7 +166,7 @@ class TotpSetupController extends Controller
                 return redirect()
                     ->route('mfa.recovery-codes')
                     ->with('recovery_codes', $recoveryCodes)
-                    ->with('status', 'TOTP activado. Guarda tus recovery codes.');
+                    ->with('status', 'TOTP activado. Guarda tus recovery codes y continúa con el OTP por correo.');
             }
 
             $mfaPendingSession->clear($request);

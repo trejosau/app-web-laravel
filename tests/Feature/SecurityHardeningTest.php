@@ -8,6 +8,7 @@ use App\Services\SecurityAuditService;
 use Database\Seeders\RoleSeeder;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 use Tests\TestCase;
@@ -80,6 +81,7 @@ class SecurityHardeningTest extends TestCase
     {
         config()->set('recaptcha.enabled', true);
         config()->set('recaptcha.secret_key', 'test-secret');
+        Mail::fake();
         Http::fake([
             '*' => Http::response(['success' => true], 200),
         ]);
@@ -90,7 +92,9 @@ class SecurityHardeningTest extends TestCase
             'password' => 'StrongPass123!',
             'password_confirmation' => 'StrongPass123!',
             'g-recaptcha-response' => 'captcha-token',
-        ])->assertRedirect('/');
+        ])->assertRedirect(route('register.email-otp.show'));
+
+        Mail::assertSentCount(1);
     }
 
     public function test_audit_log_hash_chain_is_generated_when_columns_exist(): void
@@ -110,10 +114,10 @@ class SecurityHardeningTest extends TestCase
 
     public function test_error_dictionary_returns_safe_user_messages(): void
     {
-        $error = config('security_errors.passkey.required');
+        $error = config('security_errors.mfa.totp_required');
 
         $this->assertSame(['code', 'userInfo', 'supportInfo', 'developerInfo'], array_keys($error));
-        $this->assertSame('PASSKEY-003', $error['code']);
+        $this->assertSame('MFA-001', $error['code']);
         $this->assertArrayNotHasKey('trace', $error);
         $this->assertStringNotContainsString('Exception', $error['userInfo']);
     }

@@ -72,9 +72,7 @@ class TotpLoginController extends Controller
         if ($level >= 3 || $user->role?->name === Role::ADMIN) {
             $mfaPendingSession->markTotpVerified($request);
 
-            return $user->webauthn_enabled_at && $user->webauthnCredentials()->exists()
-                ? redirect()->route('webauthn.login')
-                : redirect()->route('webauthn.setup');
+            return redirect()->route('email-otp.show');
         }
 
         $mfaPendingSession->clear($request);

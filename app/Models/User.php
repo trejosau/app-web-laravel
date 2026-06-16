@@ -3,8 +3,8 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -50,7 +50,6 @@ class User extends Authenticatable
         'totp_secret' => 'encrypted',
         'totp_enabled_at' => 'datetime',
         'totp_last_used_counter' => 'integer',
-        'webauthn_enabled_at' => 'datetime',
         'deleted_at' => 'datetime',
     ];
 
@@ -91,11 +90,6 @@ class User extends Authenticatable
     public function recoveryCodes(): HasMany
     {
         return $this->hasMany(RecoveryCode::class);
-    }
-
-    public function webauthnCredentials(): HasMany
-    {
-        return $this->hasMany(WebauthnCredential::class);
     }
 
     public function hasVerifiedRecoveryEmail(): bool

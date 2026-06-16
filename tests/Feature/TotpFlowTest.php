@@ -82,7 +82,7 @@ class TotpFlowTest extends TestCase
         $qrResponse->assertSee('<svg', false);
     }
 
-    public function test_admin_sees_continue_to_passkey_after_totp_setup_recovery_codes(): void
+    public function test_admin_sees_continue_to_email_otp_after_totp_setup_recovery_codes(): void
     {
         $this->seed(RoleSeeder::class);
 
@@ -100,6 +100,6 @@ class TotpFlowTest extends TestCase
         ])->get(route('mfa.recovery-codes'));
 
         $response->assertOk();
-        $response->assertSee('Continuar a activar Passkey');
+        $response->assertSee('Continuar con OTP por correo');
     }
 }

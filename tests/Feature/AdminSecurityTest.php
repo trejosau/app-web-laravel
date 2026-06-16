@@ -138,9 +138,9 @@ class AdminSecurityTest extends TestCase
 
         $this->actingAs($admin)
             ->withSession($this->adminSession())
-            ->get(route('admin.error-catalog.index', ['code' => 'PASSKEY-003']))
+            ->get(route('admin.error-catalog.index', ['code' => 'MFA-001']))
             ->assertOk()
-            ->assertSee('PASSKEY-003')
+            ->assertSee('MFA-001')
             ->assertDontSee('AUTH-001');
     }
 
@@ -156,7 +156,6 @@ class AdminSecurityTest extends TestCase
             ->assertDontSee('Acciones criticas')
             ->assertDontSee('Bloquear')
             ->assertDontSee('Activar')
-            ->assertDontSee('Reset passkey')
             ->assertDontSee('Soft delete');
     }
 
@@ -170,7 +169,6 @@ class AdminSecurityTest extends TestCase
             'password' => Hash::make('StrongPass123!'),
             'totp_secret' => $secret,
             'totp_enabled_at' => now(),
-            'webauthn_enabled_at' => now(),
         ]);
 
         return [$admin, $secret];

@@ -32,11 +32,6 @@ class UserPolicy
         return $user->hasRole(Role::ADMIN) && ! $user->is($target) && $this->wouldKeepAdmin($target);
     }
 
-    public function resetPasskey(User $user, User $target): bool
-    {
-        return $user->hasRole(Role::ADMIN);
-    }
-
     private function wouldKeepAdmin(User $target): bool
     {
         if ($target->role?->name !== Role::ADMIN) {

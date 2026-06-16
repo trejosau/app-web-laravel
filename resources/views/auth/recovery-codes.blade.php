@@ -15,7 +15,7 @@
         @endif
 
         @if (session()->has('auth_pending_totp_verified_at'))
-            <p><a href="{{ route('mfa.pending', [], false) }}">Continuar a activar Passkey</a></p>
+            <p><a href="{{ route('mfa.pending', [], false) }}">Continuar con OTP por correo</a></p>
         @endif
 
         @auth

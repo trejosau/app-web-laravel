@@ -9,6 +9,7 @@ use Database\Seeders\AdminUserSeeder;
 use Database\Seeders\RoleSeeder;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Tests\TestCase;
 
 class RegisterTest extends TestCase
@@ -38,6 +39,7 @@ class RegisterTest extends TestCase
     public function test_user_can_register_with_username_and_argon2id_password(): void
     {
         $this->seed(AdminUserSeeder::class);
+        Mail::fake();
 
         $response = $this->post('/register', [
             'username' => 'Secure_User',
@@ -46,8 +48,9 @@ class RegisterTest extends TestCase
             'password_confirmation' => 'StrongPass123!',
         ]);
 
-        $response->assertRedirect('/');
+        $response->assertRedirect(route('register.email-otp.show'));
         $this->assertGuest();
+        Mail::assertSentCount(1);
 
         $user = User::query()->where('username', 'secure_user')->firstOrFail();
 
@@ -158,6 +161,7 @@ class RegisterTest extends TestCase
     public function test_register_rate_limit_does_not_block_distinct_users_from_same_ip(): void
     {
         $this->seed(RoleSeeder::class);
+        Mail::fake();
 
         for ($i = 0; $i < 4; $i++) {
             $this->from('/register')->post('/register', [
@@ -165,13 +169,16 @@ class RegisterTest extends TestCase
                 'email' => 'rate_limited_'.$i.'@example.test',
                 'password' => 'StrongPass123!',
                 'password_confirmation' => 'StrongPass123!',
-            ])->assertRedirect('/');
+            ])->assertRedirect(route('register.email-otp.show'));
         }
+
+        Mail::assertSentCount(4);
     }
 
     public function test_register_rate_limit_is_applied_to_same_identity(): void
     {
         $this->seed(RoleSeeder::class);
+        Mail::fake();
 
         $payload = [
             'username' => 'rate_limited_same',

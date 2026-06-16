@@ -113,68 +113,6 @@ return [
             'developerInfo' => 'TotpService::verify sin lastUsedCounter encontro coincidencia, pero el contador resultante fue <= user.totp_last_used_counter. Pedir al usuario esperar el siguiente periodo TOTP.',
         ],
     ],
-    'passkey' => [
-        'validation_failed' => [
-            'code' => 'PASSKEY-001',
-            'userInfo' => 'No se pudo validar la Passkey.',
-            'supportInfo' => 'El registro o autenticación WebAuthn fallo por challenge, origin, RP ID, firma, credencial o user verification.',
-            'developerInfo' => 'WebauthnService lanzo excepción durante processCreate/processGet. Revisar clase sanitizada del fallo, config rp_id/origin, credential_id_hash guardado, public_key, sign_count, llaves challenge de sesión y mensaje lbuchs WebAuthnException solo en logs seguros.',
-        ],
-        'challenge_expired' => [
-            'code' => 'PASSKEY-002',
-            'userInfo' => 'La verificación de Passkey expiró.',
-            'supportInfo' => 'El challenge WebAuthn no existe o expiró antes de completar la operacion.',
-            'developerInfo' => 'Falta webauthn_register_challenge/webauthn_login_challenge o *_challenge_at, ya fue consumido, o es anterior a config(webauthn.timeout). Se requiere solicitar opciones nuevas.',
-        ],
-        'required' => [
-            'code' => 'PASSKEY-003',
-            'userInfo' => 'Debe quedar al menos una Passkey activa.',
-            'supportInfo' => 'La cuenta requiere Passkey y no se permite borrar la ultima credencial valida.',
-            'developerInfo' => 'El borrado de WebauthnCredential fue bloqueado porque user->webauthnCredentials()->count() <= 1 mientras webauthn_enabled_at indica que Passkeys están activas/requeridas.',
-        ],
-        'added' => [
-            'code' => 'PASSKEY-004',
-            'userInfo' => 'Passkey agregada correctamente.',
-            'supportInfo' => 'Credencial WebAuthn registrada y asociada al usuario.',
-            'developerInfo' => 'Fila WebauthnCredential creada con credential_id_hash único, credential_id cifrado, public_key, transports y sign_count inicial. Evento de auditoria webauthn.registered.',
-        ],
-        'removed' => [
-            'code' => 'PASSKEY-005',
-            'userInfo' => 'Passkey eliminada correctamente.',
-            'supportInfo' => 'Credencial WebAuthn eliminada sin dejar la cuenta sin Passkey.',
-            'developerInfo' => 'Borrado de WebauthnCredential completado tras validar propietario y conteo. Evento de auditoria webauthn.deleted/passkey.deleted debe incluir user_id y actor_id opcional.',
-        ],
-        'https_required' => [
-            'code' => 'PASSKEY-006',
-            'userInfo' => 'Passkeys requiere HTTPS.',
-            'supportInfo' => 'El navegador no permite WebAuthn fuera de contexto seguro.',
-            'developerInfo' => 'window.isSecureContext=false antes de navigator.credentials.create/get. Usar HTTPS, localhost o un tunel válido cuyo origin coincida con config(webauthn.origin).',
-        ],
-        'browser_unsupported' => [
-            'code' => 'PASSKEY-007',
-            'userInfo' => 'Passkeys no está disponible en este navegador.',
-            'supportInfo' => 'El navegador o WebView no expone PublicKeyCredential/navigator.credentials.',
-            'developerInfo' => 'Falta window.PublicKeyCredential o navigator.credentials. Causa comun: navegadores embebidos de mensajeria/email/camara o plataforma no soportada.',
-        ],
-        'options_failed' => [
-            'code' => 'PASSKEY-008',
-            'userInfo' => 'No se pudo preparar la Passkey.',
-            'supportInfo' => 'Fallo la generacion de opciones WebAuthn en el servidor.',
-            'developerInfo' => 'El endpoint de opciones register/login regreso non-2xx o JSON inválido. Revisar resolución de usuario pendiente/autenticado, config RP, lista de credenciales y rate limiting.',
-        ],
-        'cancelled_or_expired' => [
-            'code' => 'PASSKEY-009',
-            'userInfo' => 'Operacion cancelada o expirada.',
-            'supportInfo' => 'El usuario cancelo la operacion WebAuthn o el navegador agoto el tiempo.',
-            'developerInfo' => 'El navegador lanzo NotAllowedError durante navigator.credentials.create/get. Puede ser cancelacion del usuario, timeout, autenticador no disponible o conditional UI bloqueada.',
-        ],
-        'credential_not_found' => [
-            'code' => 'PASSKEY-010',
-            'userInfo' => 'No se pudo validar la Passkey.',
-            'supportInfo' => 'La credencial enviada no pertenece al usuario o no existe.',
-            'developerInfo' => 'La búsqueda por credential_id_hash regreso null o credential.user_id no coincide con el usuario pendiente/autenticado. No revelar existencia de credencial al usuario.',
-        ],
-    ],
     'rbac' => [
         'denied' => [
             'code' => 'RBAC-001',
@@ -258,7 +196,7 @@ return [
             'code' => 'RATE-003',
             'userInfo' => 'Demasiados intentos. Intenta más tarde.',
             'supportInfo' => 'Rate limit especifico de MFA aplicado.',
-            'developerInfo' => 'Limiter totp/webauthn/recovery-codes bloqueo solicitud por sha512(user_id o auth_pending_user_id o guest|ip). Limiters públicos deben incluir otro identificador además de IP.',
+            'developerInfo' => 'Limiter totp/email-otp/recovery-codes bloqueo solicitud por sha512(user_id o auth_pending_user_id o guest|ip). Limiters públicos deben incluir otro identificador además de IP.',
         ],
     ],
     'account' => [
@@ -322,7 +260,7 @@ return [
             'code' => 'HTTP-422',
             'userInfo' => 'No se pudo procesar la solicitud.',
             'supportInfo' => 'La solicitud tiene formato válido pero fallo una regla de negocio o verificación.',
-            'developerInfo' => 'HTTP 422 regresado por controller/service después de validacion de dominio, por ejemplo fallo MFA/WebAuthn/password reset. Revisar código de error de dominio especifico.',
+            'developerInfo' => 'HTTP 422 regresado por controller/service después de validacion de dominio, por ejemplo fallo MFA/password reset. Revisar código de error de dominio especifico.',
         ],
     ],
     'system' => [
@@ -348,7 +286,7 @@ return [
             'code' => 'SYS-004',
             'userInfo' => 'Configuración no disponible. Intenta más tarde.',
             'supportInfo' => 'Configuración requerida ausente o invalida.',
-            'developerInfo' => 'Configuración/env requerida ausente o inconsistente. Revisar APP_KEY, APP_URL, WEBAUTHN_RP_ID, WEBAUTHN_ORIGIN, mail, session y cache.',
+            'developerInfo' => 'Configuración/env requerida ausente o inconsistente. Revisar APP_KEY, APP_URL, mail, session y cache.',
         ],
     ],
 ];

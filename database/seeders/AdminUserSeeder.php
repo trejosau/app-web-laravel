@@ -87,7 +87,7 @@ class AdminUserSeeder extends Seeder
         $roles = [
             Role::GUEST => ['description' => 'Basic dashboard access', 'required_mfa_level' => 1],
             Role::USER => ['description' => 'User dashboard access with TOTP', 'required_mfa_level' => 2],
-            Role::ADMIN => ['description' => 'Admin dashboard access with TOTP and WebAuthn', 'required_mfa_level' => 3],
+            Role::ADMIN => ['description' => 'Admin dashboard access with TOTP and email OTP', 'required_mfa_level' => 3],
         ];
 
         return Role::query()->updateOrCreate(['name' => $role], $roles[$role]);
@@ -102,7 +102,7 @@ class AdminUserSeeder extends Seeder
             ->withTrashed()
             ->where('username', $username)
             ->when($email !== null, fn ($query) => $query->orWhere('email', $email))
-            ->first() ?? new User();
+            ->first() ?? new User;
 
         if ($user->trashed()) {
             $user->restore();

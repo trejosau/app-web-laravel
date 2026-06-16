@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Middleware\EnsureAccountReauthenticated;
 use App\Http\Requests\Profile\UpdatePasswordRequest;
 use App\Http\Requests\Profile\UpdateRecoveryEmailRequest;
-use App\Http\Middleware\EnsureAccountReauthenticated;
 use App\Models\User;
 use App\Services\SecurityAuditService;
 use App\Services\UserSessionService;
@@ -21,7 +21,7 @@ class ProfileController extends Controller
 {
     public function show(Request $request, UserSessionService $sessions): View
     {
-        $user = $request->user()->load(['role', 'webauthnCredentials']);
+        $user = $request->user()->load(['role']);
 
         return view('profile.show', [
             'user' => $user,

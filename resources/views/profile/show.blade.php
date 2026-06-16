@@ -27,44 +27,6 @@
         </section>
     @endif
 
-    @if ($user->hasRole('admin'))
-        <section class="panel">
-            <h2>Passkeys</h2>
-            <p><a class="button-link" href="{{ route('webauthn.setup') }}">Agregar Passkey</a></p>
-
-            @if ($user->webauthnCredentials->isNotEmpty())
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Nombre</th>
-                            <th>Ultimo uso</th>
-                            <th>Accion</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach ($user->webauthnCredentials as $credential)
-                            <tr>
-                                <td>{{ $credential->name ?? 'Passkey' }}</td>
-                                <td>{{ $credential->last_used_at?->diffForHumans() ?? 'N/A' }}</td>
-                                <td>
-                                    <form method="POST" action="{{ route('webauthn.destroy', $credential) }}" data-safe-submit onsubmit="return confirm('Eliminar Passkey');">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit">Eliminar</button>
-                                    </form>
-                                </td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-
-                @error('passkey')
-                    <p class="error">{{ $message }}</p>
-                @enderror
-            @endif
-        </section>
-    @endif
-
     <section class="panel">
         <h2>Cambiar contraseña</h2>
         <form method="POST" action="{{ route('profile.password.update') }}">
