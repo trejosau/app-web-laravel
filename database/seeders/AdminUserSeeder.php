@@ -16,32 +16,32 @@ class AdminUserSeeder extends Seeder
     public const USERS = [
         'jorgeibarra' => [
             'email_env' => 'SEED_USER_JORGEIBARRA_EMAIL',
-            'password_env' => 'SEED_USER_JORGEIBARRA_PASSWORD_B64',
+            'password_env' => 'SEED_USER_JORGEIBARRA_PASSWORD',
             'role' => Role::ADMIN,
         ],
         'sautrejo' => [
             'email_env' => 'SEED_USER_SAUTREJO_EMAIL',
-            'password_env' => 'SEED_USER_SAUTREJO_PASSWORD_B64',
+            'password_env' => 'SEED_USER_SAUTREJO_PASSWORD',
             'role' => Role::ADMIN,
         ],
         'saul' => [
             'email_env' => 'SEED_USER_SAUL_EMAIL',
-            'password_env' => 'SEED_USER_SAUL_PASSWORD_B64',
+            'password_env' => 'SEED_USER_SAUL_PASSWORD',
             'role' => Role::USER,
         ],
         'jesus' => [
             'email_env' => 'SEED_USER_JESUS_EMAIL',
-            'password_env' => 'SEED_USER_JESUS_PASSWORD_B64',
+            'password_env' => 'SEED_USER_JESUS_PASSWORD',
             'role' => Role::USER,
         ],
         'dani' => [
             'email_env' => 'SEED_USER_DANI_EMAIL',
-            'password_env' => 'SEED_USER_DANI_PASSWORD_B64',
+            'password_env' => 'SEED_USER_DANI_PASSWORD',
             'role' => Role::GUEST,
         ],
         'aza' => [
             'email_env' => 'SEED_USER_AZA_EMAIL',
-            'password_env' => 'SEED_USER_AZA_PASSWORD_B64',
+            'password_env' => 'SEED_USER_AZA_PASSWORD',
             'role' => Role::GUEST,
         ],
     ];
@@ -129,16 +129,10 @@ class AdminUserSeeder extends Seeder
 
     private static function passwordFromEnv(string $key, string $username): string
     {
-        $encoded = env($key);
+        $password = env($key);
 
-        if (! is_string($encoded) || trim($encoded) === '') {
+        if (! is_string($password) || trim($password) === '') {
             throw new RuntimeException("Missing seeded password env variable for {$username}: {$key}.");
-        }
-
-        $password = base64_decode($encoded, true);
-
-        if (! is_string($password) || $password === '') {
-            throw new RuntimeException("Invalid seeded password env variable for {$username}: {$key}.");
         }
 
         return $password;
