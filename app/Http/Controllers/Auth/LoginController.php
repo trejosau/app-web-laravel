@@ -29,6 +29,6 @@ class LoginController extends Controller
             return redirect()->route('mfa.pending');
         }
 
-        return redirect()->route('dashboard.guest')->with('status', 'Sesion iniciada.');
+        return redirect()->route('dashboard.guest')->with('status', 'Sesión iniciada.');
     }
 }

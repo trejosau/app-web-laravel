@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Recuperar contrasena</title>
+    <title>Recuperar contraseña</title>
     <style>
         body { font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; margin: 0; min-height: 100vh; display: grid; place-items: center; background: linear-gradient(180deg, #f8fbff 0%, #edf3fb 100%); color: #111827; }
         main { width: min(100% - 32px, 430px); background: rgba(255,255,255,.96); border: 1px solid #dbe3ef; border-radius: 14px; padding: 28px; box-shadow: 0 18px 45px rgba(15,23,42,.10); }
@@ -18,7 +18,7 @@
 </head>
 <body>
     <main>
-        <h1>Recuperar contrasena</h1>
+        <h1>Recuperar contraseña</h1>
         @if (session('status'))
             <p class="status">{{ session('status') }}</p>
         @endif

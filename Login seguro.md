@@ -4,7 +4,7 @@
 
 Se agrega cierre contra OWASP Top 10:2025:
 
-| Codigo | Control |
+| Código | Control |
 |---|---|
 | A01 Broken Access Control | Policies, roles, `mfa.level`, `admin.reauth`. |
 | A02 Security Misconfiguration | `.env.example` sin secretos, `APP_DEBUG=false`, security headers. |
@@ -15,11 +15,11 @@ Se agrega cierre contra OWASP Top 10:2025:
 | A07 Authentication Failures | MFA por rol, password reset seguro, reCAPTCHA v2 opcional. |
 | A08 Integrity Failures | CSRF, WebAuthn challenge, hash chain de auditoria. |
 | A09 Logging/Alerting Failures | `security_audit_logs`, sanitizacion, UI read-only. |
-| A10 Exceptional Conditions | Handler seguro, errores genericos, tokens invalid/expired. |
+| A10 Exceptional Conditions | Handler seguro, errores genéricos, tokens invalid/expired. |
 
 Nota de entorno: las pruebas se mantienen en PostgreSQL. SQLite no se usa.
 
-## Evidencia de verificacion 2026-06-02
+## Evidencia de verificación 2026-06-02
 
 | Comando | Resultado |
 |---|---|
@@ -42,7 +42,7 @@ Leyenda:
 * `[~]` Parcial, falta ajuste o prueba manual.
 * `[ ]` Faltante.
 
-Verificacion ejecutada:
+Verificación ejecutada:
 
 ```bash
 php artisan test
@@ -52,9 +52,9 @@ Resultado: `[x]` 43 tests pasaron.
 
 ---
 
-# 1. Factores reales de autenticacion
+# 1. Factores reales de autenticación
 
-El flujo real de autenticacion usa:
+El flujo real de autenticación usa:
 
 * `[x]` `username`.
 * `[x]` `password`.
@@ -75,26 +75,26 @@ Los roles `guest`, `user` y `admin` siguen existiendo como niveles de acceso y d
 
 | Modulo | Estado | Implementado | Falta |
 | --- | --- | --- | --- |
-| Registro seguro | `[x]` | Username unico, password fuerte, rol default backend, bloqueo de `role_id`, `is_admin`, `email`, `status`, logs y rate limit. | Nada critico. |
-| Login username/password | `[x]` | Username normalizado, password con `Hash::check()`, errores genericos, estado de usuario, sesion regenerada y rate limit. | Validacion de formato en login puede endurecerse. |
-| Logout | `[x]` | Limpia auth, MFA pendiente, invalida sesion, regenera CSRF y audita. | Nada critico. |
-| Roles y dashboards | `[x]` | `guest`, `user`, `admin`, middleware `role`, dashboard protegido y logs `access.denied`. | Nada critico. |
-| MFA pendiente | `[x]` | Sesion temporal, expiracion 5 min, bloqueo de dashboard mientras MFA esta pendiente. | Borrar por demasiados fallos queda cubierto por rate limit, no por contador propio. |
-| TOTP Google | `[x]` | Secreto aleatorio, QR `otpauth://totp`, 6 digitos, ventana controlada, replay counter, logs y rate limit. | Desactivacion TOTP no implementada. |
-| Recovery codes | `[x]` | Codigos fuertes, mostrados una vez, hasheados, consumo unico y regeneracion. | Nada critico. |
+| Registro seguro | `[x]` | Username único, password fuerte, rol default backend, bloqueo de `role_id`, `is_admin`, `email`, `status`, logs y rate limit. | Nada crítico. |
+| Login username/password | `[x]` | Username normalizado, password con `Hash::check()`, errores genéricos, estado de usuario, sesión regenerada y rate limit. | Validacion de formato en login puede endurecerse. |
+| Logout | `[x]` | Limpia auth, MFA pendiente, invalida sesión, regenera CSRF y audita. | Nada crítico. |
+| Roles y dashboards | `[x]` | `guest`, `user`, `admin`, middleware `role`, dashboard protegido y logs `access.denied`. | Nada crítico. |
+| MFA pendiente | `[x]` | Sesión temporal, expiración 5 min, bloqueo de dashboard mientras MFA está pendiente. | Borrar por demasiados fallos queda cubierto por rate limit, no por contador propio. |
+| TOTP Google | `[x]` | Secreto aleatorio, QR `otpauth://totp`, 6 dígitos, ventana controlada, replay counter, logs y rate limit. | Desactivacíon TOTP no implementada. |
+| Recovery codes | `[x]` | Códigos fuertes, mostrados una vez, hasheados, consumo único y regeneracion. | Nada crítico. |
 | WebAuthn/Passkey | `[x]` | Registro y login con challenge, `navigator.credentials`, validacion backend, sign counter, logs y rate limit. | Requiere prueba manual en navegador/origen seguro. |
-| Perfil | `[x]` | Cambio de password, email de recuperacion verificado, cierre de otras sesiones y password reset publico. | Nada critico. |
-| Rate limiting | `[x]` | Registro, login, TOTP, recovery codes, WebAuthn, admin, password reset, reenvio de correo, reauth y acciones criticas. | Nada critico. |
+| Perfil | `[x]` | Cambio de password, email de recuperación verificado, cierre de otras sesiones y password reset público. | Nada crítico. |
+| Rate limiting | `[x]` | Registro, login, TOTP, recovery codes, WebAuthn, admin, password reset, reenvío de correo, reauth y acciones críticas. | Nada crítico. |
 | Auditoria | `[~]` | Tabla, servicio, sanitizacion de metadata y eventos principales. | Faltan eventos planeados como `token.invalid`, `token.expired`, `admin.reauthenticated`. |
-| CSRF | `[x]` | Middleware web activo, error CSRF invalida sesion y registra auditoria. | Nada critico. |
-| Sesiones | `[~]` | Sesion cifrada por config, DB sessions, regeneracion en login/MFA/password, revocacion de otras sesiones. | Timeout admin mas corto no implementado. |
-| Manejo de errores | `[~]` | Mensajes genericos en auth/MFA, CSRF controlado, no se imprimen secretos. | No todos los codigos planeados tienen handler propio. |
-| Frontend Blade | `[~]` | Login, registro, TOTP, recovery codes, WebAuthn y dashboard funcionales. | Spinners/doble submit no estan completos en todos los formularios. |
+| CSRF | `[x]` | Middleware web activo, error CSRF invalida sesión y registra auditoria. | Nada crítico. |
+| Sesiones | `[~]` | Sesión cifrada por config, DB sessions, regeneracion en login/MFA/password, revocacion de otras sesiones. | Timeout admin más corto no implementado. |
+| Manejo de errores | `[~]` | Mensajes genéricos en auth/MFA, CSRF controlado, no se imprimen secretos. | No todos los códigos planeados tienen handler propio. |
+| Frontend Blade | `[~]` | Login, registro, TOTP, recovery codes, WebAuthn y dashboard funcionales. | Spinners/doble submit no están completos en todos los formularios. |
 | Cloudflare Tunnel | `[~]` | Hay soporte de `APP_URL`, `WEBAUTHN_RP_ID` y binario local. | Falta guia paso a paso y activar cookie secure al usar HTTPS. |
-| Password reset | `[x]` | Solicitud generica, token hasheado, expiracion, un solo uso, validacion y cambio. | Tests preparados; schema PostgreSQL local no migrado. |
-| Reautenticacion admin | `[x]` | Password + TOTP, ventana 5 min, rate limit y auditoria. | Tests preparados; schema PostgreSQL local no migrado. |
+| Password reset | `[x]` | Solicitud genérica, token hasheado, expiración, un solo uso, validacion y cambio. | Tests preparados; schema PostgreSQL local no migrado. |
+| Reautenticación admin | `[x]` | Password + TOTP, ventana 5 min, rate limit y auditoria. | Tests preparados; schema PostgreSQL local no migrado. |
 | Auditorias externas | `[~]` | `composer audit` ejecutado sin advisories. | `npm`, Gitleaks, TruffleHog, ZAP/Burp pendientes por entorno/manual. |
-| README/changelog/guia | `[x]` | README, changelog y docs de pruebas/matriz/herramientas. | Nada critico. |
+| README/changelog/guia | `[x]` | README, changelog y docs de pruebas/matriz/herramientas. | Nada crítico. |
 
 ---
 
@@ -114,7 +114,7 @@ Herramienta: Laravel Hash, Argon2id.
 
 ## TOTP
 
-* `[x]` El OTP de 6 digitos no se guarda.
+* `[x]` El OTP de 6 dígitos no se guarda.
 * `[x]` El `totp_secret` se guarda en `users.totp_secret`.
 * `[x]` El `totp_secret` se cifra con cast Eloquent `encrypted`.
 * `[x]` Laravel usa `Crypt` con `APP_KEY` y cipher `AES-256-CBC`.
@@ -141,10 +141,10 @@ Herramienta: Laravel Hash, Argon2id.
 
 * `[x]` El backend no recibe ni guarda private keys.
 * `[x]` `credential_id` se guarda cifrado con cast `encrypted`.
-* `[x]` `credential_id_hash` usa SHA-512 para busqueda unica.
+* `[x]` `credential_id_hash` usa SHA-512 para búsqueda unica.
 * `[x]` `public_key` se guarda sin hash porque se necesita para verificar firmas.
 * `[x]` `credential_id`, `credential_id_hash` y `public_key` quedan ocultos en serializacion.
-* `[x]` Challenges de registro/login se guardan en sesion y se eliminan con `pull()` al usarse.
+* `[x]` Challenges de registro/login se guardan en sesión y se eliminan con `pull()` al usarse.
 * `[x]` Challenge, credential ID, public key, assertion, cookies y session keys se filtran de logs.
 * `[x]` Sign counter se guarda y actualiza.
 
@@ -154,15 +154,15 @@ Herramientas: `lbuchs/webauthn`, Laravel session, Laravel encrypted cast/Crypt, 
 
 | Token/dato | Estado | Manejo actual |
 | --- | --- | --- |
-| CSRF token | `[x]` | Laravel `VerifyCsrfToken`; al fallar invalida sesion y registra `csrf.failed`. |
-| Session ID | `[x]` | Sesion regenerada despues de login completo, MFA y cambio de password. |
-| Sesion MFA pendiente | `[x]` | `auth_pending_user_id`, `auth_pending_level`, `auth_pending_started_at`, expira en 5 min. |
-| WebAuthn challenge | `[x]` | Guardado temporal en sesion, un solo uso con `pull()`. |
+| CSRF token | `[x]` | Laravel `VerifyCsrfToken`; al fallar invalida sesión y registra `csrf.failed`. |
+| Session ID | `[x]` | Sesión regenerada después de login completo, MFA y cambio de password. |
+| Sesión MFA pendiente | `[x]` | `auth_pending_user_id`, `auth_pending_level`, `auth_pending_started_at`, expira en 5 min. |
+| WebAuthn challenge | `[x]` | Guardado temporal en sesión, un solo uso con `pull()`. |
 | Recovery email link | `[x]` | URL firmada temporal de Laravel, expira en 30 min. |
 | Remember token | `[~]` | Se regenera al cambiar password; no hay flujo remember-me activo. |
 | Password reset token | `[x]` | Token aleatorio hasheado, expirable y de un solo uso. |
-| Personal access tokens | `No aplica` | Migracion Sanctum existe, no hay modulo API token en esta practica local. |
-| Reauthentication token | `[x]` | Marca temporal en sesion, expira en 5 min y se limpia al logout/timeout. |
+| Personal access tokens | `No aplica` | Migracion Sanctum existe, no hay modulo API token en está practica local. |
+| Reauthentication token | `[x]` | Marca temporal en sesión, expira en 5 min y se limpia al logout/timeout. |
 
 ---
 
@@ -173,7 +173,7 @@ Herramientas: `lbuchs/webauthn`, Laravel session, Laravel encrypted cast/Crypt, 
 ```txt
 username + password
   -> validar credenciales
-  -> regenerar sesion
+  -> regenerar sesión
   -> log login.success
   -> /dashboard/guest
 ```
@@ -184,7 +184,7 @@ Checklist:
 * `[x]` Password requerida.
 * `[x]` Password verificada con `Hash::check()`.
 * `[x]` Rate limit `login`: 5/min por `sha512(username|IP)`.
-* `[x]` Sesion regenerada.
+* `[x]` Sesión regenerada.
 * `[x]` Log de exito/fallo.
 * `[x]` Dashboard protegido.
 
@@ -195,22 +195,22 @@ username + password
   -> crear MFA pendiente
   -> solicitar TOTP
   -> validar TOTP
-  -> regenerar sesion
+  -> regenerar sesión
   -> log login.success
   -> /dashboard/user
 ```
 
 Checklist:
 
-* `[x]` Password correcta no inicia sesion completa.
+* `[x]` Password correcta no inicia sesión completa.
 * `[x]` Usuario queda en MFA pendiente.
 * `[x]` TOTP obligatorio.
-* `[x]` TOTP setup si aun no esta activado.
+* `[x]` TOTP setup si aun no está activado.
 * `[x]` QR compatible con Google Authenticator.
 * `[x]` Rate limit `totp`.
 * `[x]` OTP incorrecto genera log seguro.
 * `[x]` OTP correcto genera log seguro.
-* `[x]` Dashboard bloqueado mientras MFA esta pendiente.
+* `[x]` Dashboard bloqueado mientras MFA está pendiente.
 * `[x]` Recovery code puede sustituir TOTP y se consume.
 
 ## `admin`: username/password + TOTP Google + WebAuthn
@@ -221,7 +221,7 @@ username + password
   -> validar TOTP o recovery code
   -> solicitar WebAuthn/Passkey
   -> validar assertion
-  -> regenerar sesion
+  -> regenerar sesión
   -> log login.success
   -> /dashboard/admin
 ```
@@ -237,28 +237,28 @@ Checklist:
 * `[x]` Challenge WebAuthn validado.
 * `[x]` Origin/RP ID dependen de `WEBAUTHN_RP_ID` y contexto seguro.
 * `[x]` Log de exito/fallo WebAuthn.
-* `[x]` Sesion admin mas corta.
-* `[x]` Reautenticacion admin para acciones criticas.
+* `[x]` Sesión admin más corta.
+* `[x]` Reautenticación admin para acciones críticas.
 
 ---
 
 # 5. Matriz de permisos
 
-| Accion | Guess | User | Admin |
+| Acción | Guess | User | Admin |
 | --- | ---: | ---: | ---: |
-| Login con username/password | Si | Si | Si |
-| Login con TOTP Google | No | Si | Si |
-| Login con recovery code | No | Si | Si, pero aun requiere WebAuthn |
-| Login con WebAuthn/Passkey | No | No | Si |
-| Ver `/dashboard/guest` | Si | Si | Si |
-| Ver `/dashboard/user` | No | Si | Si |
-| Ver `/dashboard/admin` | No | No | Si |
-| Cambiar password propia | Si | Si | Si |
-| Email de recuperacion verificado | Si | Si | Si |
-| Cerrar otras sesiones propias | Si | Si | Si |
-| Activar TOTP | No | Si | Si |
-| Regenerar recovery codes | No | Si | Si |
-| Registrar Passkey | No | No | Si |
+| Login con username/password | Sí | Sí | Sí |
+| Login con TOTP Google | No | Sí | Sí |
+| Login con recovery code | No | Sí | Si, pero aun requiere WebAuthn |
+| Login con WebAuthn/Passkey | No | No | Sí |
+| Ver `/dashboard/guest` | Sí | Sí | Sí |
+| Ver `/dashboard/user` | No | Sí | Sí |
+| Ver `/dashboard/admin` | No | No | Sí |
+| Cambiar password propia | Sí | Sí | Sí |
+| Email de recuperación verificado | Sí | Sí | Sí |
+| Cerrar otras sesiones propias | Sí | Sí | Sí |
+| Activar TOTP | No | Sí | Sí |
+| Regenerar recovery codes | No | Sí | Sí |
+| Registrar Passkey | No | No | Sí |
 | Ver logs de auditoria | No | No | No implementado en UI |
 | Cambiar roles | No | No | No implementado en UI |
 
@@ -277,7 +277,7 @@ Checklist:
 | `password-reset` | `[x]` | 3/10 min | SHA-512 de `email|IP` |
 | `email-resend` | `[x]` | 3/10 min | SHA-512 de `user_id|IP` |
 
-Respuesta segura: `429 Demasiados intentos. Intenta mas tarde.`
+Respuesta segura: `429 Demasiados intentos. Intenta más tarde.`
 
 ---
 
@@ -330,8 +330,8 @@ Respuesta segura: `429 Demasiados intentos. Intenta mas tarde.`
 
 ## Registro
 
-* `[x]` `username`: requerido, string, 3-32, regex `^[a-z0-9_]+$`, unico.
-* `[x]` `password`: requerido, confirmado, minimo 12, mayus/minus, numeros y simbolos.
+* `[x]` `username`: requerido, string, 3-32, regex `^[a-z0-9_]+$`, único.
+* `[x]` `password`: requerido, confirmado, mínimo 12, mayus/minus, números y símbolos.
 * `[x]` Prohibidos: `role_id`, `is_admin`, `status`, `email`, `name`.
 * `[x]` Username normalizado a lowercase y trim.
 
@@ -340,14 +340,14 @@ Respuesta segura: `429 Demasiados intentos. Intenta mas tarde.`
 * `[x]` `username` requerido.
 * `[x]` `password` requerida.
 * `[x]` Username normalizado a lowercase y trim.
-* `[x]` Mensaje generico si falla.
+* `[x]` Mensaje genérico si falla.
 * `[~]` Falta regex/maximo igual que registro.
 
 ## TOTP
 
 * `[x]` `otp` requerido.
-* `[x]` Solo digitos.
-* `[x]` Longitud segun `TOTP_DIGITS`, default 6.
+* `[x]` Solo dígitos.
+* `[x]` Longitud según `TOTP_DIGITS`, default 6.
 
 ## Recovery code
 
@@ -360,11 +360,11 @@ Respuesta segura: `429 Demasiados intentos. Intenta mas tarde.`
 
 * `[x]` Password actual requerida.
 * `[x]` Password nueva fuerte y confirmada.
-* `[x]` Email de recuperacion requerido, RFC, max 255 y unico.
+* `[x]` Email de recuperación requerido, RFC, max 255 y único.
 
 ---
 
-# 9. Configuracion local
+# 9. Configuración local
 
 | Item | Estado |
 | --- | --- |
@@ -388,8 +388,8 @@ Respuesta segura: `429 Demasiados intentos. Intenta mas tarde.`
 ## Unitarias
 
 * `[x]` Auditoria elimina metadata sensible.
-* `[x]` TOTP genera codigos RFC 6238.
-* `[x]` TOTP verifica codigos.
+* `[x]` TOTP genera códigos RFC 6238.
+* `[x]` TOTP verifica códigos.
 * `[x]` TOTP rechaza replay.
 * `[x]` TOTP secret se cifra en modelo.
 * `[x]` Recovery code usa Laravel Hash.
@@ -404,7 +404,7 @@ Respuesta segura: `429 Demasiados intentos. Intenta mas tarde.`
 * `[x]` Bloqueo de mass assignment de rol/admin.
 * `[x]` Login `guest` 1FA.
 * `[x]` Login `user` pasa a MFA pendiente.
-* `[x]` Error generico en credenciales invalidas.
+* `[x]` Error genérico en credenciales invalidas.
 * `[x]` Rate limit de registro.
 * `[x]` Rate limit de login.
 * `[x]` MFA pendiente expira.
@@ -420,9 +420,9 @@ Respuesta segura: `429 Demasiados intentos. Intenta mas tarde.`
 ## Faltan pruebas
 
 * `[x]` Password reset completo.
-* `[x]` Reautenticacion admin.
+* `[x]` Reautenticación admin.
 * `[ ]` Browser/E2E real de passkey con origen seguro.
-* `[~]` CSRF invalido como test automatizado.
+* `[~]` CSRF inválido como test automatizado.
 * `[~]` Secret scanning y dependency audit.
 
 ---
@@ -432,14 +432,14 @@ Respuesta segura: `429 Demasiados intentos. Intenta mas tarde.`
 Prioridad alta:
 
 * `[x]` Implementar password reset completo.
-* `[x]` Agregar reautenticacion admin para acciones criticas.
-* `[x]` Definir timeout admin mas corto.
-* `[x]` Agregar limiter para reenvio de correo y password reset.
+* `[x]` Agregar reautenticación admin para acciones críticas.
+* `[x]` Definir timeout admin más corto.
+* `[x]` Agregar limiter para reenvío de correo y password reset.
 * `[ ]` Probar WebAuthn manualmente en navegador con `localhost` o HTTPS tunnel.
 
 Prioridad media:
 
-* `[x]` Agregar desactivacion TOTP segura.
+* `[x]` Agregar desactivacíon TOTP segura.
 * `[x]` Endurecer validacion de `username` en login.
 * `[x]` Completar spinners/doble submit en formularios Blade.
 * `[x]` Documentar Cloudflare Tunnel paso a paso.
@@ -456,7 +456,7 @@ Prioridad baja:
 
 # 12. Entregable actual
 
-* `[x]` Codigo Laravel 10.
+* `[x]` Código Laravel 10.
 * `[x]` Registro funcional.
 * `[x]` Login funcional por `username/password`.
 * `[x]` Logout funcional.
@@ -475,7 +475,7 @@ Prioridad baja:
 * `[x]` Passwords con Argon2id.
 * `[x]` TOTP secrets cifrados.
 * `[x]` Recovery codes hasheados.
-* `[x]` WebAuthn credential ID cifrado y hasheado para busqueda.
+* `[x]` WebAuthn credential ID cifrado y hasheado para búsqueda.
 * `[x]` Sesiones protegidas y regeneradas.
 * `[x]` CSRF activo.
 * `[x]` Validaciones backend.

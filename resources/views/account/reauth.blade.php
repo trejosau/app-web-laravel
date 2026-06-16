@@ -6,7 +6,7 @@
         <form method="POST" action="{{ route('account.reauth.store') }}" data-safe-submit>
             @csrf
 
-            <label for="password">Contrasena actual</label>
+            <label for="password">Contraseña actual</label>
             <input id="password" name="password" type="password" autocomplete="current-password">
 
             @if ($requiresTotp)

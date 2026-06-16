@@ -25,7 +25,7 @@ class AdminReauthRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'password.required' => 'Ingresa tu contrasena actual.',
+            'password.required' => 'Ingresa tu contraseña actual.',
             'otp.required' => 'Ingresa tu codigo TOTP.',
             'otp.digits' => 'El codigo TOTP debe tener :digits digitos.',
         ];

@@ -9,6 +9,6 @@
     <h2>Seguridad</h2>
     <div class="admin-links">
         <a class="button-link" href="{{ route('profile.show') }}">Perfil</a>
-        <a class="button-link" href="{{ route('mfa.recovery-codes') }}">Codigos de recuperacion</a>
+        <a class="button-link" href="{{ route('mfa.recovery-codes') }}">Códigos de recuperación</a>
     </div>
 </section>

@@ -5,7 +5,7 @@
         <h1>Reautenticacion de administrador</h1>
         <form method="POST" action="{{ route('admin.reauth.store') }}" data-safe-submit>
             @csrf
-            <label for="password">Contrasena actual</label>
+            <label for="password">Contraseña actual</label>
             <input id="password" name="password" type="password" autocomplete="current-password">
 
             <label for="otp">Codigo TOTP</label>

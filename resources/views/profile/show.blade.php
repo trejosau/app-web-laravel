@@ -66,28 +66,28 @@
     @endif
 
     <section class="panel">
-        <h2>Cambiar contrasena</h2>
+        <h2>Cambiar contraseña</h2>
         <form method="POST" action="{{ route('profile.password.update') }}">
             @csrf
             @method('PUT')
 
-            <label for="current_password">Contrasena actual</label>
+            <label for="current_password">Contraseña actual</label>
             <input id="current_password" name="current_password" type="password" autocomplete="current-password">
             @error('current_password')
                 <p class="error">{{ $message }}</p>
             @enderror
 
-            <label for="password">Nueva contrasena</label>
+            <label for="password">Nueva contraseña</label>
             <input id="password" name="password" type="password" autocomplete="new-password">
             @include('partials.password-rules', ['target' => 'password'])
             @error('password')
                 <p class="error">{{ $message }}</p>
             @enderror
 
-            <label for="password_confirmation">Confirmar nueva contrasena</label>
+            <label for="password_confirmation">Confirmar nueva contraseña</label>
             <input id="password_confirmation" name="password_confirmation" type="password" autocomplete="new-password">
 
-            <button type="submit">Actualizar contrasena</button>
+            <button type="submit">Actualizar contraseña</button>
         </form>
     </section>
 

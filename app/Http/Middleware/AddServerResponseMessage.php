@@ -16,7 +16,7 @@ class AddServerResponseMessage
     {
         $response = $next($request);
         $serverNumber = (string) config('app.server_number', '1');
-        $message = "Respondio servidor: {$serverNumber}.";
+        $message = "Respondió servidor: {$serverNumber}.";
 
         $response->headers->set('X-Server-Number', $serverNumber);
         $response->headers->set('X-Server-Response', $message);

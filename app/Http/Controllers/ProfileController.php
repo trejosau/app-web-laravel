@@ -56,7 +56,7 @@ class ProfileController extends Controller
 
         $auditService->log($request, 'password.changed', 'info', 200, $user->id);
 
-        return back()->with('status', 'Contrasena actualizada.');
+        return back()->with('status', 'Contraseña actualizada.');
     }
 
     public function updateEmail(

@@ -11,7 +11,7 @@
 
             <form method="POST" action="{{ route('totp.setup.confirm') }}">
                 @csrf
-                <label for="current_password">Contrasena actual</label>
+                <label for="current_password">Contraseña actual</label>
                 <input id="current_password" name="current_password" type="password" autocomplete="current-password">
 
                 <label for="current_otp">Codigo TOTP actual</label>

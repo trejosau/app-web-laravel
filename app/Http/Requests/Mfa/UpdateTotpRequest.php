@@ -38,7 +38,7 @@ class UpdateTotpRequest extends FormRequest
         $digits = (int) config('totp.digits');
 
         return [
-            'current_password.required' => 'Ingresa tu contrasena actual.',
+            'current_password.required' => 'Ingresa tu contraseña actual.',
             'current_otp.required' => 'Ingresa tu codigo TOTP actual.',
             'current_otp.regex' => 'El codigo TOTP actual debe tener '.$digits.' digitos.',
             'otp.required' => 'Ingresa el codigo del nuevo TOTP.',
