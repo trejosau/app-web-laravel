@@ -21,6 +21,7 @@ class WebauthnController extends Controller
 {
     public function setup(Request $request, MfaPendingSessionService $mfaPendingSession): View
     {
+        $this->redirectToSecurePasskeyUrl($request);
         $this->registrationUser($request, $mfaPendingSession);
 
         return view('auth.webauthn-setup', [
@@ -30,6 +31,7 @@ class WebauthnController extends Controller
 
     public function login(Request $request, MfaPendingSessionService $mfaPendingSession): View
     {
+        $this->redirectToSecurePasskeyUrl($request);
         $user = $mfaPendingSession->pendingUser($request);
 
         abort_unless($user !== null && $request->session()->has('auth_pending_totp_verified_at'), 404);
@@ -46,6 +48,7 @@ class WebauthnController extends Controller
         MfaPendingSessionService $mfaPendingSession,
         WebauthnService $webauthnService
     ): JsonResponse {
+        $this->redirectToSecurePasskeyUrl($request);
         $user = $this->registrationUser($request, $mfaPendingSession);
 
         return response()->json($webauthnService->registrationOptions($user, $request));
@@ -57,6 +60,7 @@ class WebauthnController extends Controller
         WebauthnService $webauthnService,
         SecurityAuditService $auditService
     ): JsonResponse {
+        $this->redirectToSecurePasskeyUrl($request);
         $user = $this->registrationUser($request, $mfaPendingSession);
         $isPending = $mfaPendingSession->isPending($request);
 
@@ -73,7 +77,7 @@ class WebauthnController extends Controller
             }
 
             return response()->json([
-                'redirect' => $isPending ? route('dashboard.admin') : route('profile.show'),
+                'redirect' => $this->httpUrl($isPending ? route('dashboard.admin', [], false) : route('profile.show', [], false)),
             ]);
         } catch (Throwable $exception) {
             $webauthnService->fail($request, $user, $exception);
@@ -90,6 +94,7 @@ class WebauthnController extends Controller
         MfaPendingSessionService $mfaPendingSession,
         WebauthnService $webauthnService
     ): JsonResponse {
+        $this->redirectToSecurePasskeyUrl($request);
         $user = $this->pendingAdmin($request, $mfaPendingSession);
 
         return response()->json($webauthnService->authenticationOptions($user, $request));
@@ -101,6 +106,7 @@ class WebauthnController extends Controller
         WebauthnService $webauthnService,
         SecurityAuditService $auditService
     ): JsonResponse {
+        $this->redirectToSecurePasskeyUrl($request);
         $user = $this->pendingAdmin($request, $mfaPendingSession);
 
         try {
@@ -114,7 +120,7 @@ class WebauthnController extends Controller
             ]);
 
             return response()->json([
-                'redirect' => route('dashboard.admin'),
+                'redirect' => $this->httpUrl(route('dashboard.admin', [], false)),
             ]);
         } catch (Throwable $exception) {
             $webauthnService->fail($request, $user, $exception);
@@ -185,5 +191,30 @@ class WebauthnController extends Controller
         }
 
         throw new HttpResponseException(redirect()->guest(route('account.reauth')));
+    }
+
+    private function redirectToSecurePasskeyUrl(Request $request): void
+    {
+        if ($request->isSecure()) {
+            return;
+        }
+
+        throw new HttpResponseException(redirect()->to($this->securePasskeyUrl($request)));
+    }
+
+    private function securePasskeyUrl(Request $request): string
+    {
+        $origin = rtrim((string) config('webauthn.origin'), '/');
+
+        if (! str_starts_with($origin, 'https://')) {
+            $origin = 'https://'.$request->getHttpHost();
+        }
+
+        return $origin.$request->getRequestUri();
+    }
+
+    private function httpUrl(string $path): string
+    {
+        return rtrim((string) config('app.url'), '/').$path;
     }
 }
