@@ -17,7 +17,7 @@
 <body>
     <main>
         <h1>Verificar correo</h1>
-        <p>Enviamos un OTP a tu correo. Revisa Mailtrap.</p>
+        <p>Enviamos un OTP a tu correo. Revisa Mailpit.</p>
 
         @if (session('status'))
             <p class="status">{{ session('status') }}</p>
