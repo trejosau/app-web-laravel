@@ -3,6 +3,7 @@
 namespace App\Http;
 
 use App\Http\Middleware\AdminSessionTimeout;
+use App\Http\Middleware\AddServerResponseMessage;
 use App\Http\Middleware\Authenticate;
 use App\Http\Middleware\EncryptCookies;
 use App\Http\Middleware\EnsureAccountReauthenticated;
@@ -52,6 +53,7 @@ class Kernel extends HttpKernel
         TrimStrings::class,
         ConvertEmptyStringsToNull::class,
         SecurityHeaders::class,
+        AddServerResponseMessage::class,
     ];
 
     /**
