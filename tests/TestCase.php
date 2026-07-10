@@ -16,14 +16,14 @@ abstract class TestCase extends BaseTestCase
         config(['recaptcha.enabled' => false]);
     }
 
-    protected function requirePostgresSchema(): void
+    protected function requireDatabaseSchema(): void
     {
         if (
             ! Schema::hasTable('roles')
             || ! Schema::hasTable('users')
             || ! Schema::hasTable('security_audit_logs')
         ) {
-            $this->markTestSkipped('PostgreSQL schema is not migrated in this environment.');
+            $this->markTestSkipped('The configured test database schema is not migrated.');
         }
     }
 }

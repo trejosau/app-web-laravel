@@ -2,8 +2,8 @@
 
 namespace Tests\Feature;
 
-use App\Models\User;
 use App\Models\SecurityAuditLog;
+use App\Models\User;
 use Database\Seeders\RoleSeeder;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Carbon;
@@ -19,12 +19,8 @@ class PasswordResetTest extends TestCase
 
     protected function setUp(): void
     {
-        if (! extension_loaded('pdo_pgsql')) {
-            $this->markTestSkipped('PDO PostgreSQL driver is not available for feature tests.');
-        }
-
         parent::setUp();
-        $this->requirePostgresSchema();
+        $this->requireDatabaseSchema();
         $this->seed(RoleSeeder::class);
     }
 

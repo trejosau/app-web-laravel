@@ -1,6 +1,6 @@
 # Login Seguro
 
-Proyecto Laravel 10 en desarrollo local para autenticacion con roles y MFA.
+Proyecto Laravel 10 en desarrollo local para autenticación con roles y MFA.
 
 ## Stack
 
@@ -18,24 +18,24 @@ Proyecto Laravel 10 en desarrollo local para autenticacion con roles y MFA.
 | Auth | `app/Services/AuthService.php`, `app/Http/Controllers/Auth` | Login, registro, logout y reset de password |
 | MFA | `app/Http/Controllers/Mfa`, `app/Services/TotpService.php`, `app/Services/WebauthnService.php` | TOTP, recovery codes y passkeys |
 | RBAC | `app/Models/Role.php`, `app/Http/Middleware/EnsureRole.php`, `app/Policies` | Roles `guest`, `user`, `admin` |
-| Reauth | `app/Http/Controllers/Account/ReauthController.php`, `app/Http/Controllers/Admin/ReauthController.php` | Reautenticacion para acciones sensibles |
-| Auditoria | `app/Services/SecurityAuditService.php`, `app/Models/SecurityAuditLog.php` | Logs de seguridad con sanitizacion y hash chain |
-| Admin | `app/Http/Controllers/Admin` | Usuarios, auditoria y catalogo de errores |
+| Reauth | `app/Http/Controllers/Account/ReauthController.php`, `app/Http/Controllers/Admin/ReauthController.php` | Reautenticación para acciones sensibles |
+| Auditoría | `app/Services/SecurityAuditService.php`, `app/Models/SecurityAuditLog.php` | Logs de seguridad con sanitización y hash chain |
+| Admin | `app/Http/Controllers/Admin` | Usuarios, auditoría y catálogo de errores |
 
 ## Seguridad aplicada
 
 - Passwords con Argon2id.
 - CSRF activo en rutas web.
 - Rate limits por login, registro, MFA, recovery y admin.
-- Sesion regenerada al login y logout.
-- Sesion cifrada con cookie `laravel_session`.
-- Cierre automatico de otras sesiones al completar login.
+- Sesión regenerada al login y logout.
+- Sesión cifrada con cookie `laravel_session`.
+- Cierre automático de otras sesiones al completar login.
 - MFA por nivel de rol.
-- TOTP con proteccion anti-replay.
+- TOTP con protección anti-replay.
 - Passkeys restringidas a admin con MFA nivel 3 y reauth.
 - Recovery codes hasheados y de un solo uso.
 - TOTP secret y credential ID cifrados.
-- Metadata sensible filtrada antes de auditoria.
+- Metadata sensible filtrada antes de auditoría.
 - Logs separados: `audit.log`, `authentication.log`, `development.log`.
 
 ## Usuarios seed
@@ -49,15 +49,15 @@ El password se guarda en Base64 solo para evitar caracteres especiales en `.env`
 
 ## Dependencias removidas
 
-Sanctum fue retirado del codigo porque no hay uso activo de tokens/API.
+Sanctum fue retirado del código porque no hay uso activo de tokens/API.
 
-En esta maquina `composer.lock` no se regenero porque Composer no puede ejecutar sin `php` en PATH. Cuando PHP este disponible, regenerarlo con:
+En está máquina `composer.lock` no se regenero porque Composer no puede ejecutar sin `php` en PATH. Cuando PHP este disponible, regenerarlo con:
 
 ```bash
 composer remove laravel/sanctum
 ```
 
-## Verificacion
+## Verificación
 
 ```bash
 php artisan test

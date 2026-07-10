@@ -30,7 +30,7 @@
                 <p class="error">{{ $message }}</p>
             @enderror
 
-            <label for="password">Contrasena</label>
+            <label for="password">Contraseña</label>
             <input id="password" name="password" type="password" autocomplete="current-password">
             @error('password')
                 <p class="error">{{ $message }}</p>
@@ -39,7 +39,7 @@
             @include('partials.recaptcha')
 
             <button type="submit" data-submit-label="Entrando...">Entrar</button>
-            <p><a href="{{ route('password.request') }}">Olvide mi contrasena</a></p>
+            <p><a href="{{ route('password.request') }}">Olvidé mi contraseña</a></p>
         </form>
     </main>
     @include('partials.safe-submit')

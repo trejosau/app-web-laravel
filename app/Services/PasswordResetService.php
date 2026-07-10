@@ -55,8 +55,8 @@ class PasswordResetService
 
         $url = route('password.reset', ['token' => $token, 'email' => $user->email]);
 
-        Mail::raw("PIN para restablecer tu contrasena: {$token}\n\nContinua aqui:\n{$url}", function (Message $message) use ($user): void {
-            $message->to($user->email)->subject('Restablece tu contrasena');
+        Mail::raw("PIN para restablecer tu contraseña: {$token}\n\nContinúa aquí:\n{$url}", function (Message $message) use ($user): void {
+            $message->to($user->email)->subject('Restablece tu contraseña');
         });
 
         $this->auditService->log($request, 'token.issued', 'info', 202, $user->id, [

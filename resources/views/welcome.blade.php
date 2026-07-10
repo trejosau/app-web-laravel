@@ -18,12 +18,12 @@
 <body>
     <main>
         <h1>Login seguro</h1>
-        <p>Autenticacion con roles, MFA, auditoria y sesiones cifradas.</p>
+        <p>Autenticación con roles, MFA, auditoría y sesiones cifradas.</p>
         <div class="actions">
             @auth
                 <a href="{{ route('dashboard') }}">Ir al panel</a>
             @else
-                <a href="{{ route('login') }}">Iniciar sesion</a>
+                <a href="{{ route('login') }}">Iniciar sesión</a>
                 <a class="secondary" href="{{ route('register') }}">Crear cuenta</a>
             @endauth
         </div>

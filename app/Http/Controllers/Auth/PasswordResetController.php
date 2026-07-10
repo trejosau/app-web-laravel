@@ -21,7 +21,7 @@ class PasswordResetController extends Controller
     {
         $passwordReset->request($request->validated('email'), $request);
 
-        return back()->with('status', 'Si el correo existe y esta verificado, se enviara un PIN.');
+        return back()->with('status', 'Si el correo existe y está verificado, se enviará un PIN.');
     }
 
     public function resetForm(Request $request, string $token): View
@@ -44,6 +44,6 @@ class PasswordResetController extends Controller
             ]);
         }
 
-        return redirect()->route('login')->with('status', 'Contrasena actualizada.');
+        return redirect()->route('login')->with('status', 'Contraseña actualizada.');
     }
 }

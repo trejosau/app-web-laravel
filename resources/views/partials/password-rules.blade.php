@@ -1,9 +1,9 @@
 <div class="password-rules" data-password-rules data-password-target="{{ $target ?? 'password' }}">
-    <p data-rule="length">Minimo 12 caracteres</p>
-    <p data-rule="upper">Una mayuscula</p>
-    <p data-rule="lower">Una minuscula</p>
-    <p data-rule="number">Un numero</p>
-    <p data-rule="symbol">Un simbolo</p>
+    <p data-rule="length">Mínimo 12 caracteres</p>
+    <p data-rule="upper">Una mayúscula</p>
+    <p data-rule="lower">Una minúscula</p>
+    <p data-rule="number">Un número</p>
+    <p data-rule="symbol">Un símbolo</p>
 </div>
 
 @once

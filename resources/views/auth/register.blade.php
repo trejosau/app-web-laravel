@@ -35,14 +35,14 @@
                 <p class="error">{{ $message }}</p>
             @enderror
 
-            <label for="password">Contrasena</label>
+            <label for="password">Contraseña</label>
             <input id="password" name="password" type="password" autocomplete="new-password">
             @include('partials.password-rules', ['target' => 'password'])
             @error('password')
                 <p class="error">{{ $message }}</p>
             @enderror
 
-            <label for="password_confirmation">Confirmar contrasena</label>
+            <label for="password_confirmation">Confirmar contraseña</label>
             <input id="password_confirmation" name="password_confirmation" type="password" autocomplete="new-password">
 
             @include('partials.recaptcha')

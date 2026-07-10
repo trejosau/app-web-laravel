@@ -18,12 +18,8 @@ class SecurityHardeningTest extends TestCase
 
     protected function setUp(): void
     {
-        if (! extension_loaded('pdo_pgsql')) {
-            $this->markTestSkipped('PDO PostgreSQL driver is not available for feature tests.');
-        }
-
         parent::setUp();
-        $this->requirePostgresSchema();
+        $this->requireDatabaseSchema();
         $this->seed(RoleSeeder::class);
     }
 
@@ -96,7 +92,7 @@ class SecurityHardeningTest extends TestCase
     public function test_audit_log_hash_chain_is_generated_when_columns_exist(): void
     {
         if (! Schema::hasColumn('security_audit_logs', 'current_hash')) {
-            $this->markTestSkipped('Audit hash columns are pending migration in this PostgreSQL database.');
+            $this->markTestSkipped('Audit hash columns are pending migration in the configured database.');
         }
 
         app(SecurityAuditService::class)->log(request(), 'test.event.one');

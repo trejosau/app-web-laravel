@@ -18,12 +18,8 @@ class LoginTest extends TestCase
 
     protected function setUp(): void
     {
-        if (! extension_loaded('pdo_pgsql')) {
-            $this->markTestSkipped('PDO PostgreSQL driver is not available for feature tests.');
-        }
-
         parent::setUp();
-        $this->requirePostgresSchema();
+        $this->requireDatabaseSchema();
     }
 
     public function test_login_form_can_be_viewed(): void

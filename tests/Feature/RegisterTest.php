@@ -17,22 +17,18 @@ class RegisterTest extends TestCase
 
     protected function setUp(): void
     {
-        if (! extension_loaded('pdo_pgsql')) {
-            $this->markTestSkipped('PDO PostgreSQL driver is not available for feature tests.');
-        }
-
         parent::setUp();
-        $this->requirePostgresSchema();
+        $this->requireDatabaseSchema();
     }
 
     public function test_register_form_can_be_viewed(): void
     {
         $this->get('/register')
             ->assertOk()
-            ->assertSee('Minimo 12 caracteres')
-            ->assertSee('Una mayuscula')
-            ->assertSee('Una minuscula')
-            ->assertSee('Un simbolo');
+            ->assertSee('Mínimo 12 caracteres')
+            ->assertSee('Una mayúscula')
+            ->assertSee('Una minúscula')
+            ->assertSee('Un símbolo');
     }
 
     public function test_user_can_register_with_username_and_argon2id_password(): void
