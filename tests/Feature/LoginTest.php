@@ -115,7 +115,7 @@ class LoginTest extends TestCase
         }
     }
 
-    public function test_invalid_credentials_show_generic_error(): void
+    public function test_invalid_password_shows_a_generic_error(): void
     {
         $this->seed(RoleSeeder::class);
 
@@ -139,6 +139,34 @@ class LoginTest extends TestCase
             'severity' => 'warning',
             'status' => 422,
         ]);
+    }
+
+    public function test_missing_user_shows_the_same_generic_error(): void
+    {
+        $response = $this->from('/login')->post('/login', [
+            'username' => 'missing_user',
+            'password' => 'WrongPass123!',
+        ]);
+
+        $response->assertRedirect('/login');
+        $this->assertStringContainsString('AUTH-001', session('errors')->first('username'));
+        $this->assertGuest();
+    }
+
+    public function test_user_can_login_with_email(): void
+    {
+        $this->seed(RoleSeeder::class);
+        $user = User::factory()->create([
+            'email' => 'login@example.test',
+            'password' => Hash::make('StrongPass123!'),
+        ]);
+
+        $this->post('/login', [
+            'username' => 'LOGIN@example.test',
+            'password' => 'StrongPass123!',
+        ])->assertRedirect(route('dashboard.guest'));
+
+        $this->assertAuthenticatedAs($user);
     }
 
     public function test_login_rate_limit_is_applied(): void

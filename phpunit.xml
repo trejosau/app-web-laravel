@@ -17,12 +17,12 @@
     <env name="MAIL_MAILER" value="array"/>
     <env name="QUEUE_CONNECTION" value="sync"/>
     <env name="SESSION_DRIVER" value="array"/>
-    <env name="SEED_USER_JORGEIBARRA_PASSWORD" value="TestJorge123!"/>
-    <env name="SEED_USER_SAUTREJO_PASSWORD" value="TestSautrejo123!"/>
-    <env name="SEED_USER_SAUL_PASSWORD" value="TestSaul123!"/>
-    <env name="SEED_USER_JESUS_PASSWORD" value="TestJesus123!"/>
-    <env name="SEED_USER_DANI_PASSWORD" value="TestDani123!"/>
-    <env name="SEED_USER_AZA_PASSWORD" value="TestAza123!"/>
+    <env name="SEED_USER_JORGEIBARRA_PASSWORD_B64" value="VGVzdEpvcmdlMTIzIQ=="/>
+    <env name="SEED_USER_SAUTREJO_PASSWORD_B64" value="VGVzdFNhdXRyZWpvMTIzIQ=="/>
+    <env name="SEED_USER_SAUL_PASSWORD_B64" value="VGVzdFNhdWwxMjMh"/>
+    <env name="SEED_USER_JESUS_PASSWORD_B64" value="VGVzdEplc3VzMTIzIQ=="/>
+    <env name="SEED_USER_DANI_PASSWORD_B64" value="VGVzdERhbmkxMjMh"/>
+    <env name="SEED_USER_AZA_PASSWORD_B64" value="VGVzdEF6YTEyMyE="/>
     <env name="TELESCOPE_ENABLED" value="false"/>
   </php>
   <source>
