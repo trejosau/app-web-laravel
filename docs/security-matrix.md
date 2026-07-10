@@ -36,8 +36,8 @@
 | `/dashboard/admin` | auth, role, `mfa.level:3`, admin timeout |
 | `/admin/reauth` | admin 3FA, rate limit |
 | `/account/reauth` | auth, MFA completo, password y TOTP si aplica |
-| `/admin/users` | admin 3FA, reauth |
-| `/admin/audit-logs` | admin 3FA, reauth, read-only |
+| `/admin/users` | admin 3FA; reauth solo en mutaciones sensibles |
+| `/admin/audit-logs` | admin 3FA, read-only |
 | `/mfa/webauthn/setup` | admin autenticado + reauth, o admin pendiente tras TOTP |
 | `/mfa/recovery-codes/regenerate` | auth, MFA completo, reauth, rate limit |
 

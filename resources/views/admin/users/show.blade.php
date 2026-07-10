@@ -9,4 +9,42 @@
         <p>Estado: {{ $user->status }}</p>
     </section>
 
+    <section class="panel">
+        <h2>Acciones sensibles</h2>
+        <p class="hint">Estas acciones requieren una reautenticación de administrador reciente.</p>
+
+        @can('block', $user)
+            @if ($user->status === 'active')
+                <form method="POST" action="{{ route('admin.users.block', $user) }}" data-safe-submit>
+                    @csrf
+                    @method('PUT')
+                    <button type="submit">Bloquear acceso</button>
+                </form>
+            @else
+                <form method="POST" action="{{ route('admin.users.activate', $user) }}" data-safe-submit>
+                    @csrf
+                    @method('PUT')
+                    <button type="submit">Activar acceso</button>
+                </form>
+            @endif
+        @endcan
+
+        @can('resetPasskey', $user)
+            @if ($user->webauthnCredentials()->exists())
+                <form method="POST" action="{{ route('admin.users.passkey.reset', $user) }}" data-safe-submit>
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit">Restablecer passkeys</button>
+                </form>
+            @endif
+        @endcan
+
+        @can('delete', $user)
+            <form method="POST" action="{{ route('admin.users.destroy', $user) }}" data-safe-submit>
+                @csrf
+                @method('DELETE')
+                <button type="submit">Eliminar usuario</button>
+            </form>
+        @endcan
+    </section>
 @endsection

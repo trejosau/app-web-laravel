@@ -58,4 +58,19 @@ class UserController extends Controller
 
         return redirect()->route('admin.users.index')->with('status', 'Usuario eliminado.');
     }
+
+    public function resetPasskey(Request $request, User $user, SecurityAuditService $auditService): RedirectResponse
+    {
+        $this->authorize('resetPasskey', $user);
+
+        $deletedCredentials = $user->webauthnCredentials()->delete();
+        $user->forceFill(['webauthn_enabled_at' => null])->save();
+
+        $auditService->log($request, 'user.passkey_reset', 'warning', 200, $user->id, [
+            'actor_id' => $request->user()->id,
+            'deleted_credentials' => $deletedCredentials,
+        ]);
+
+        return back()->with('status', 'Passkeys del usuario restablecidas.');
+    }
 }
