@@ -24,7 +24,7 @@
         <form method="POST" action="{{ route('login.store') }}" data-safe-submit>
             @csrf
 
-            <label for="username">Usuario</label>
+            <label for="username">Usuario o correo electrónico</label>
             <input id="username" name="username" value="{{ old('username') }}" autocomplete="username" autofocus>
             @error('username')
                 <p class="error">{{ $message }}</p>

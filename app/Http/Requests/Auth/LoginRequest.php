@@ -29,7 +29,26 @@ class LoginRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'username' => ['required', 'string', 'min:3', 'max:32', 'regex:/^[a-z0-9_]+$/'],
+            'username' => [
+                'required',
+                'string',
+                'max:255',
+                function (string $attribute, mixed $value, \Closure $fail): void {
+                    $identifier = (string) $value;
+
+                    if (str_contains($identifier, '@')) {
+                        if (! filter_var($identifier, FILTER_VALIDATE_EMAIL)) {
+                            $fail('Ingresa un correo electrónico válido.');
+                        }
+
+                        return;
+                    }
+
+                    if (mb_strlen($identifier) < 3 || ! preg_match('/^[a-z0-9_]+$/', $identifier)) {
+                        $fail('El usuario debe tener al menos 3 caracteres y usar solo letras, números o guion bajo.');
+                    }
+                },
+            ],
             'password' => ['required', 'string'],
             'g-recaptcha-response' => ['nullable', 'string'],
         ];

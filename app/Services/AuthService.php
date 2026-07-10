@@ -22,33 +22,44 @@ class AuthService
      * Validate credentials and complete login only when the required MFA level is done.
      *
      * @param  array{username: string, password: string}  $data
-     * @return array{credentials_valid: bool, authenticated: bool, mfa_pending: bool}
+     * @return array{credentials_valid: bool, authenticated: bool, mfa_pending: bool, failure_reason: string|null}
      */
     public function login(array $data, Request $request): array
     {
-        $username = $this->normalizeUsername($data['username']);
+        $identifier = $this->normalizeUsername($data['username']);
+        $identifierColumn = filter_var($identifier, FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
         $user = User::query()
             ->with('role')
-            ->where('username', $username)
+            ->where($identifierColumn, $identifier)
             ->first();
 
-        if (! $user || ! Hash::check($data['password'], $user->password)) {
+        if (! $user) {
             $this->auditService->log($request, 'login.failed', 'warning', 422, $user?->id, [
-                'identifier_fingerprint' => $this->fingerprint($username),
-                'known_user' => $user !== null,
+                'identifier_fingerprint' => $this->fingerprint($identifier),
+                'known_user' => false,
                 'stage' => 'credentials',
             ]);
 
-            return ['credentials_valid' => false, 'authenticated' => false, 'mfa_pending' => false];
+            return ['credentials_valid' => false, 'authenticated' => false, 'mfa_pending' => false, 'failure_reason' => 'user_not_found'];
+        }
+
+        if (! Hash::check($data['password'], $user->password)) {
+            $this->auditService->log($request, 'login.failed', 'warning', 422, $user->id, [
+                'identifier_fingerprint' => $this->fingerprint($identifier),
+                'known_user' => true,
+                'stage' => 'credentials',
+            ]);
+
+            return ['credentials_valid' => false, 'authenticated' => false, 'mfa_pending' => false, 'failure_reason' => 'invalid_password'];
         }
 
         if ($user->status !== 'active' || ($user->locked_until && $user->locked_until->isFuture())) {
             $this->auditService->log($request, 'login.failed', 'warning', 403, $user->id, [
-                'identifier_fingerprint' => $this->fingerprint($username),
+                'identifier_fingerprint' => $this->fingerprint($identifier),
                 'stage' => 'account_state',
             ]);
 
-            return ['credentials_valid' => false, 'authenticated' => false, 'mfa_pending' => false];
+            return ['credentials_valid' => false, 'authenticated' => false, 'mfa_pending' => false, 'failure_reason' => 'account_unavailable'];
         }
 
         $mfaLevel = (int) ($user->role?->required_mfa_level ?? 1);
@@ -58,10 +69,10 @@ class AuthService
             $this->auditService->log($request, 'login.mfa_required', 'info', 202, $user->id, [
                 'mfa_level' => $mfaLevel,
                 'role' => $user->role?->name,
-                'identifier_fingerprint' => $this->fingerprint($username),
+                'identifier_fingerprint' => $this->fingerprint($identifier),
             ]);
 
-            return ['credentials_valid' => true, 'authenticated' => false, 'mfa_pending' => true];
+            return ['credentials_valid' => true, 'authenticated' => false, 'mfa_pending' => true, 'failure_reason' => null];
         }
 
         $sessionTrace = $this->sessions->completeLogin($user, $request, 1);
@@ -71,7 +82,7 @@ class AuthService
             'role' => $user->role?->name,
         ]);
 
-        return ['credentials_valid' => true, 'authenticated' => true, 'mfa_pending' => false];
+        return ['credentials_valid' => true, 'authenticated' => true, 'mfa_pending' => false, 'failure_reason' => null];
     }
 
     /**
