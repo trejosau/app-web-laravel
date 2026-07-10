@@ -29,12 +29,5 @@
             @endif
         @endcan
 
-        @can('delete', $user)
-            <form method="POST" action="{{ route('admin.users.destroy', $user) }}" data-safe-submit>
-                @csrf
-                @method('DELETE')
-                <button type="submit">Eliminar usuario</button>
-            </form>
-        @endcan
     </section>
 @endsection

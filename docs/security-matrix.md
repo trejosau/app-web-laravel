@@ -17,7 +17,6 @@
 | Ver auditoria | No | No | Sí + reauth |
 | Cambiar roles | No | No | No implementado |
 | Bloquear usuario | No | No | Sí + reauth |
-| Soft delete usuario | No | No | Sí + reauth |
 | Cambiar correo de recuperación | Sí + reauth | Sí + reauth | Sí + reauth |
 | Regenerar recovery codes | No | Sí + reauth | Sí + reauth |
 

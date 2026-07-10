@@ -27,11 +27,6 @@ class UserPolicy
         return $user->hasRole(Role::ADMIN);
     }
 
-    public function delete(User $user, User $target): bool
-    {
-        return $user->hasRole(Role::ADMIN) && ! $user->is($target) && $this->wouldKeepAdmin($target);
-    }
-
     private function wouldKeepAdmin(User $target): bool
     {
         if ($target->role?->name !== Role::ADMIN) {

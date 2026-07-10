@@ -155,7 +155,7 @@ class AdminSecurityTest extends TestCase
             ->assertOk()
             ->assertSee('Acciones sensibles')
             ->assertSee('Bloquear acceso')
-            ->assertSee('Eliminar usuario');
+            ->assertDontSee('Eliminar usuario');
     }
 
     private function adminWithTotp(string $username = 'admin_user'): array

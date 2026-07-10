@@ -48,14 +48,4 @@ class UserController extends Controller
 
         return back()->with('status', 'Usuario activado.');
     }
-
-    public function destroy(Request $request, User $user, SecurityAuditService $auditService): RedirectResponse
-    {
-        $this->authorize('delete', $user);
-
-        $user->delete();
-        $auditService->log($request, 'user.soft_deleted', 'warning', 200, $user->id, ['actor_id' => $request->user()->id]);
-
-        return redirect()->route('admin.users.index')->with('status', 'Usuario eliminado.');
-    }
 }
