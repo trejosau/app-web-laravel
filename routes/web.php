@@ -87,15 +87,16 @@ Route::middleware(['mfa.complete', 'auth', 'role:admin', 'mfa.level:3', 'admin.s
     Route::get('/reauth', [ReauthController::class, 'show'])->name('reauth');
     Route::post('/reauth', [ReauthController::class, 'store'])->middleware('throttle:admin-reauth')->name('reauth.store');
 
+    Route::get('/users', [AdminUserController::class, 'index'])->name('users.index');
+    Route::get('/users/{user}', [AdminUserController::class, 'show'])->name('users.show');
+    Route::get('/audit-logs', [AuditLogController::class, 'index'])->name('audit-logs.index');
+    Route::get('/audit-logs/{auditLog}', [AuditLogController::class, 'show'])->name('audit-logs.show');
+    Route::get('/error-catalog', ErrorCatalogController::class)->name('error-catalog.index');
+
     Route::middleware(['admin.reauth', 'throttle:admin-critical'])->group(function () {
-        Route::get('/users', [AdminUserController::class, 'index'])->name('users.index');
-        Route::get('/users/{user}', [AdminUserController::class, 'show'])->name('users.show');
         Route::put('/users/{user}/block', [AdminUserController::class, 'block'])->name('users.block');
         Route::put('/users/{user}/activate', [AdminUserController::class, 'activate'])->name('users.activate');
         Route::delete('/users/{user}', [AdminUserController::class, 'destroy'])->name('users.destroy');
-        Route::get('/audit-logs', [AuditLogController::class, 'index'])->name('audit-logs.index');
-        Route::get('/audit-logs/{auditLog}', [AuditLogController::class, 'show'])->name('audit-logs.show');
-        Route::get('/error-catalog', ErrorCatalogController::class)->name('error-catalog.index');
     });
 });
 

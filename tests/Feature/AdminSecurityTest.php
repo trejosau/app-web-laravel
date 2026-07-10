@@ -144,7 +144,7 @@ class AdminSecurityTest extends TestCase
             ->assertDontSee('AUTH-001');
     }
 
-    public function test_admin_user_detail_does_not_show_critical_actions(): void
+    public function test_admin_user_detail_shows_sensitive_actions_without_executing_them(): void
     {
         [$admin] = $this->adminWithTotp();
         $target = User::factory()->create();
@@ -153,10 +153,9 @@ class AdminSecurityTest extends TestCase
             ->withSession($this->adminSession())
             ->get(route('admin.users.show', $target))
             ->assertOk()
-            ->assertDontSee('Acciones criticas')
-            ->assertDontSee('Bloquear')
-            ->assertDontSee('Activar')
-            ->assertDontSee('Soft delete');
+            ->assertSee('Acciones sensibles')
+            ->assertSee('Bloquear acceso')
+            ->assertSee('Eliminar usuario');
     }
 
     private function adminWithTotp(string $username = 'admin_user'): array
