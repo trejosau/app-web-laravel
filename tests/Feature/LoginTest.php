@@ -115,7 +115,7 @@ class LoginTest extends TestCase
         }
     }
 
-    public function test_invalid_password_shows_a_generic_error(): void
+    public function test_invalid_password_shows_an_informative_error(): void
     {
         $this->seed(RoleSeeder::class);
 
@@ -130,8 +130,10 @@ class LoginTest extends TestCase
         ]);
 
         $response->assertRedirect('/login');
-        $response->assertSessionHasErrors('username');
-        $this->assertStringContainsString('AUTH-001', session('errors')->first('username'));
+        $response->assertSessionHasErrors([
+            'password' => 'Contraseña incorrecta.',
+        ]);
+        $response->assertSessionDoesntHaveErrors('username');
         $this->assertGuest();
 
         $this->assertDatabaseHas('security_audit_logs', [
@@ -141,7 +143,7 @@ class LoginTest extends TestCase
         ]);
     }
 
-    public function test_missing_user_shows_the_same_generic_error(): void
+    public function test_missing_user_shows_an_informative_error(): void
     {
         $response = $this->from('/login')->post('/login', [
             'username' => 'missing_user',
@@ -149,7 +151,31 @@ class LoginTest extends TestCase
         ]);
 
         $response->assertRedirect('/login');
-        $this->assertStringContainsString('AUTH-001', session('errors')->first('username'));
+        $response->assertSessionHasErrors([
+            'username' => 'Este usuario no existe.',
+        ]);
+        $this->assertGuest();
+    }
+
+    public function test_unavailable_account_shows_an_informative_error(): void
+    {
+        $this->seed(RoleSeeder::class);
+
+        User::factory()->create([
+            'username' => 'inactive_user',
+            'password' => Hash::make('StrongPass123!'),
+            'status' => 'inactive',
+        ]);
+
+        $response = $this->from('/login')->post('/login', [
+            'username' => 'inactive_user',
+            'password' => 'StrongPass123!',
+        ]);
+
+        $response->assertRedirect('/login');
+        $response->assertSessionHasErrors([
+            'username' => 'Esta cuenta está bloqueada o inactiva.',
+        ]);
         $this->assertGuest();
     }
 
