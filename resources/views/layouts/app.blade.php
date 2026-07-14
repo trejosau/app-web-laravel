@@ -24,10 +24,24 @@
         .warning { color: #92400e; background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; padding: 10px 12px; }
         .muted, .hint { color: #64748b; }
         .badge { display: inline-block; padding: 3px 8px; border-radius: 999px; background: #e0ecff; color: #1e40af; font-size: 13px; font-weight: 700; }
+        .nav { display: flex; align-items: center; gap: 12px; margin-bottom: 18px; }
+        .nav form { margin-left: auto; }
+        .nav button { padding: 8px 10px; }
     </style>
 </head>
 <body>
     <main>
+        @auth
+            <nav class="nav" aria-label="Navegación principal">
+                <a href="{{ route('dashboard') }}">Inicio</a>
+                <a href="{{ route('profile.show') }}">Perfil</a>
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <button type="submit">Cerrar sesión</button>
+                </form>
+            </nav>
+        @endauth
+
         @if (session('status'))
             <section class="panel" style="margin-bottom: 16px;">
                 {{ session('status') }}

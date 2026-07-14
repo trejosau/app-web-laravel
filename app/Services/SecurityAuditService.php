@@ -244,7 +244,6 @@ class SecurityAuditService
             'token',
             'challenge',
             'recovery_code',
-            'credential_id',
             'public_key',
             'assertion',
             'cookie',
@@ -275,7 +274,6 @@ class SecurityAuditService
             'session',
             'token',
             'totp',
-            'webauthn',
         ]);
     }
 

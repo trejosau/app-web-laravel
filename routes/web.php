@@ -96,7 +96,6 @@ Route::middleware(['mfa.complete', 'auth', 'role:admin', 'mfa.level:3', 'admin.s
     Route::middleware(['admin.reauth', 'throttle:admin-critical'])->group(function () {
         Route::put('/users/{user}/block', [AdminUserController::class, 'block'])->name('users.block');
         Route::put('/users/{user}/activate', [AdminUserController::class, 'activate'])->name('users.activate');
-        Route::delete('/users/{user}', [AdminUserController::class, 'destroy'])->name('users.destroy');
         Route::delete('/users/{user}/passkey', [AdminUserController::class, 'resetPasskey'])->name('users.passkey.reset');
     });
 });

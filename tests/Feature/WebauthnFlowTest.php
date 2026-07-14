@@ -104,6 +104,27 @@ class WebauthnFlowTest extends TestCase
         $this->get('/register/email-otp')->assertNotFound();
     }
 
+    public function test_webauthn_rate_limit_is_scoped_to_pending_user_and_ip(): void
+    {
+        $firstUser = $this->admin();
+
+        for ($attempt = 0; $attempt < 5; $attempt++) {
+            $this->withSession($this->pendingSession($firstUser))
+                ->getJson(route('webauthn.register.options'))
+                ->assertOk();
+        }
+
+        $this->withSession($this->pendingSession($firstUser))
+            ->getJson(route('webauthn.register.options'))
+            ->assertTooManyRequests();
+
+        $secondUser = $this->admin();
+
+        $this->withSession($this->pendingSession($secondUser))
+            ->getJson(route('webauthn.register.options'))
+            ->assertOk();
+    }
+
     private function admin(bool $withPasskey = false): User
     {
         $role = Role::query()->where('name', Role::ADMIN)->firstOrFail();

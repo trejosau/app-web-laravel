@@ -21,14 +21,14 @@ return [
         'decay_minutes' => (int) env('RATE_LIMIT_TOTP_DECAY_MINUTES', 1),
         'key' => 'pending_user_ip',
     ],
-    'recovery-codes' => [
-        'attempts' => (int) env('RATE_LIMIT_RECOVERY_CODES_ATTEMPTS', 3),
-        'decay_minutes' => (int) env('RATE_LIMIT_RECOVERY_CODES_DECAY_MINUTES', 10),
-        'key' => 'pending_user_ip',
-    ],
     'webauthn' => [
         'attempts' => (int) env('RATE_LIMIT_WEBAUTHN_ATTEMPTS', 5),
         'decay_minutes' => (int) env('RATE_LIMIT_WEBAUTHN_DECAY_MINUTES', 1),
+        'key' => 'pending_user_ip',
+    ],
+    'recovery-codes' => [
+        'attempts' => (int) env('RATE_LIMIT_RECOVERY_CODES_ATTEMPTS', 3),
+        'decay_minutes' => (int) env('RATE_LIMIT_RECOVERY_CODES_DECAY_MINUTES', 10),
         'key' => 'pending_user_ip',
     ],
     'admin' => [
