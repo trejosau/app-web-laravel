@@ -181,6 +181,12 @@ const runPasskeyFlow = async (button, error, messages) => {
 };
 
 const initializeButton = (button) => {
+    if (button.dataset.webauthnInitialized === 'true') {
+        return;
+    }
+
+    button.dataset.webauthnInitialized = 'true';
+
     const error = getElement(button.dataset.errorId);
     const warning = getElement(button.dataset.warningId);
     const messages = readMessages(button);
@@ -188,6 +194,9 @@ const initializeButton = (button) => {
 
     if (supportWarning) {
         setMessage(warning, supportWarning);
+        button.disabled = true;
+
+        return;
     }
 
     button.addEventListener('click', async () => {

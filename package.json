@@ -2,7 +2,8 @@
     "private": true,
     "scripts": {
         "dev": "vite",
-        "build": "vite build"
+        "build": "vite build",
+        "test:js": "node --test tests/Js/*.test.cjs"
     },
     "devDependencies": {
         "axios": "^1.1.2",
