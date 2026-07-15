@@ -68,6 +68,20 @@ class AdminReauthenticationTest extends TestCase
             ->assertSessionHasErrors(['password', 'otp']);
     }
 
+    public function test_admin_user_actions_are_wired_to_the_reauthentication_modal(): void
+    {
+        $admin = $this->admin();
+        $target = User::factory()->create();
+
+        $this->actingAs($admin)
+            ->withSession($this->adminSession())
+            ->get(route('admin.users.show', $target))
+            ->assertOk()
+            ->assertSee('data-admin-reauth-dialog', false)
+            ->assertSee('data-admin-reauth', false)
+            ->assertSee('data-action-label="bloquear el acceso de '.$target->username.'"', false);
+    }
+
     private function admin(): User
     {
         return User::factory()->create([

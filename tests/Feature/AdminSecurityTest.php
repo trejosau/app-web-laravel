@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Http\Middleware\EnsureAdminReauthenticated;
 use App\Models\Role;
 use App\Models\User;
 use App\Services\TotpService;
@@ -38,6 +39,37 @@ class AdminSecurityTest extends TestCase
             'event' => 'admin.reauthenticated',
         ]);
         $this->assertNotNull($admin->fresh()->totp_last_used_counter);
+    }
+
+    public function test_admin_reauthentication_supports_the_modal_json_flow(): void
+    {
+        [$admin, $secret] = $this->adminWithTotp();
+
+        $response = $this->actingAs($admin)
+            ->withSession(['auth_completed_mfa_level' => 3])
+            ->postJson(route('admin.reauth.store'), [
+                'password' => 'StrongPass123!',
+                'otp' => app(TotpService::class)->codeAt($secret, time()),
+            ])
+            ->assertOk()
+            ->assertJsonStructure(['message', 'reauthenticated_until', 'reauthenticated_for']);
+
+        $this->assertGreaterThan(now()->timestamp, $response->json('reauthenticated_until'));
+        $response->assertSessionHas(EnsureAdminReauthenticated::SESSION_KEY);
+    }
+
+    public function test_admin_reauthentication_modal_gets_json_errors(): void
+    {
+        [$admin] = $this->adminWithTotp();
+
+        $this->actingAs($admin)
+            ->withSession(['auth_completed_mfa_level' => 3])
+            ->postJson(route('admin.reauth.store'), [
+                'password' => 'WrongPass123!',
+                'otp' => '123456',
+            ])
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors('password');
     }
 
     public function test_admin_critical_action_without_reauth_is_blocked(): void

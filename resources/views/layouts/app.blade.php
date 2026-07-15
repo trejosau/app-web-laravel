@@ -14,7 +14,7 @@
         label { display: block; font-weight: 600; margin-bottom: 6px; }
         input, select { box-sizing: border-box; width: 100%; padding: 11px 12px; border: 1px solid #cbd5e1; border-radius: 8px; margin-bottom: 12px; background: #fff; }
         input:focus, select:focus { outline: 0; border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37,99,235,.16); }
-        button, .button-link { display: inline-block; padding: 11px 14px; border: 0; border-radius: 8px; background: #2563eb; color: #fff; font-weight: 700; cursor: pointer; text-decoration: none; }
+        button, .button-link { display: inline-block; min-height: 44px; padding: 11px 14px; border: 0; border-radius: 8px; background: #2563eb; color: #fff; font-weight: 700; cursor: pointer; text-decoration: none; }
         button:hover, .button-link:hover { background: #1d4ed8; }
         button:disabled { opacity: .65; cursor: wait; }
         a { color: #2563eb; }
@@ -27,6 +27,12 @@
         .nav { display: flex; align-items: center; gap: 12px; margin-bottom: 18px; }
         .nav form { margin-left: auto; }
         .nav button { padding: 8px 10px; }
+        .button-danger { background: #b91c1c; }
+        .button-danger:hover { background: #991b1b; }
+        .button-secondary { background: #475569; }
+        .button-secondary:hover { background: #334155; }
+        .sensitive-actions { display: flex; flex-wrap: wrap; gap: 12px; }
+        .sensitive-actions form { margin: 0; }
     </style>
 </head>
 <body>
@@ -50,6 +56,11 @@
 
         @yield('content')
     </main>
+    @auth
+        @if (auth()->user()->hasRole(\App\Models\Role::ADMIN))
+            @include('admin.partials.reauth-modal')
+        @endif
+    @endauth
     @include('partials.safe-submit')
 </body>
 </html>
